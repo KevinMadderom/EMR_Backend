@@ -4,7 +4,7 @@ namespace EMR.Backend.Models
 {
     public class MedicalRecord
     {
-        public int MedicalRecordID { get; set; } // PK
+        public int RecordID { get; set; } // PK
         public int PatientID { get; set; } // FK to Patient
         public int StaffID { get; set; } // FK to Staff
         public DateTime DateCreated { get; set; }

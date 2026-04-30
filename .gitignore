@@ -427,3 +427,7 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# EMRKS - never commit the real connection string / password.
+# Each developer keeps their own appsettings.json based on appsettings.example.json.
+EMR.Backend/appsettings.json

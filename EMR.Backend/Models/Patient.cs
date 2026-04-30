@@ -1,8 +1,9 @@
+using System;
+
 namespace EMR.Backend.Models
 {
     public class Patient
     {
-         // primary key [cite: 212, 237]
         public int PatientID { get; set; } // PK
 
         public string FirstName { get; set; }
@@ -13,6 +14,10 @@ namespace EMR.Backend.Models
         public string Email { get; set; }
         public string EmergencyContact { get; set; }
 
-        public DateTime DateOfBirth { get; set; } 
+        public DateTime DateOfBirth { get; set; }
+
+        // Auth (added in Delivery 3)
+        public string Username { get; set; }
+        public string PasswordHash { get; set; }
     }
 }
