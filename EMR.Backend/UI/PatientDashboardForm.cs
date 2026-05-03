@@ -24,6 +24,9 @@ namespace EMR.Backend.UI
         private readonly PaymentRepository          _payRepo      = new PaymentRepository();
         private readonly PatientRepository          _patientRepo  = new PatientRepository();
         private readonly NotificationRepository     _notifRepo    = new NotificationRepository();
+        private readonly AllergyRepository          _allergyRepo  = new AllergyRepository();
+        private readonly ImmunizationRepository     _immunRepo    = new ImmunizationRepository();
+        private readonly InsuranceRepository        _insurRepo    = new InsuranceRepository();
         private readonly AuditLogger                _audit        = new AuditLogger();
 
         public PatientDashboardForm()
@@ -53,6 +56,9 @@ namespace EMR.Backend.UI
             tabs.TabPages.Add(BuildBillingTab());
             tabs.TabPages.Add(BuildLabResultsTab());
             tabs.TabPages.Add(BuildNotificationsTab());
+            tabs.TabPages.Add(BuildAllergiesTab());
+            tabs.TabPages.Add(BuildImmunizationsTab());
+            tabs.TabPages.Add(BuildInsuranceTab());
             Controls.Add(tabs);
 
             _audit.LogPatient(_me.PatientID, "Opened patient dashboard");
@@ -75,7 +81,7 @@ namespace EMR.Backend.UI
         {
             var tab = new TabPage("Profile (FR-04)");
 
-            int y = 20, gap = 35;
+            int y = 20, gap = 44;
             TextBox first = null, last = null, gender = null, addr = null, phone = null, email = null, emergency = null;
             DateTimePicker dob = null;
 
@@ -224,6 +230,87 @@ namespace EMR.Backend.UI
             grid.Dock = DockStyle.Fill;
             tab.Controls.Add(grid);
             grid.DataSource = _notifRepo.GetByPatient(_me.PatientID);
+            return tab;
+        }
+
+        private TabPage BuildAllergiesTab()
+        {
+            var tab = new TabPage("Allergies");
+            var grid = UiHelpers.MakeGrid(0, 0, 0, 0);
+            grid.Dock = DockStyle.Fill;
+            tab.Controls.Add(grid);
+            grid.DataSource = _allergyRepo.GetByPatient(_me.PatientID);
+            _audit.LogPatient(_me.PatientID, "Viewed allergies");
+            return tab;
+        }
+
+        private TabPage BuildImmunizationsTab()
+        {
+            var tab = new TabPage("Immunizations");
+            var grid = UiHelpers.MakeGrid(0, 0, 0, 0);
+            grid.Dock = DockStyle.Fill;
+            tab.Controls.Add(grid);
+            grid.DataSource = _immunRepo.GetByPatient(_me.PatientID);
+            _audit.LogPatient(_me.PatientID, "Viewed immunizations");
+            return tab;
+        }
+
+        private TabPage BuildInsuranceTab()
+        {
+            var tab = new TabPage("Insurance");
+
+            DataGridView grid = null;
+            void Reload() { grid.DataSource = _insurRepo.GetByPatient(_me.PatientID); }
+
+            grid = UiHelpers.MakeGrid(10, 10, 0, 200);
+            grid.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            Reload();
+            tab.Controls.Add(grid);
+
+            int y = 220;
+            tab.Controls.Add(UiHelpers.MakeLabel("Add Insurance", 10, y, 200, true)); y += 28;
+
+            tab.Controls.Add(UiHelpers.MakeLabel("Provider", 10, y));
+            var provider = new TextBox { Location = new Point(160, y - 2), Size = new Size(300, 24), Font = UiHelpers.Body };
+            tab.Controls.Add(provider); y += 34;
+
+            tab.Controls.Add(UiHelpers.MakeLabel("Policy number", 10, y));
+            var policy = new TextBox { Location = new Point(160, y - 2), Size = new Size(200, 24), Font = UiHelpers.Body };
+            tab.Controls.Add(policy); y += 34;
+
+            tab.Controls.Add(UiHelpers.MakeLabel("Coverage details", 10, y));
+            var coverage = new TextBox
+            {
+                Location = new Point(160, y - 2), Size = new Size(500, 60),
+                Font = UiHelpers.Body, Multiline = true,
+            };
+            tab.Controls.Add(coverage); y += 74;
+
+            tab.Controls.Add(UiHelpers.MakeButton("Add Insurance", 160, y, 160, (s, e) =>
+            {
+                if (string.IsNullOrWhiteSpace(provider.Text) || string.IsNullOrWhiteSpace(policy.Text))
+                {
+                    UiHelpers.Error("Provider and policy number are required.");
+                    return;
+                }
+                int id = _insurRepo.AddInsurance(new Insurance
+                {
+                    PatientID       = _me.PatientID,
+                    ProviderName    = provider.Text.Trim(),
+                    PolicyNumber    = policy.Text.Trim(),
+                    CoverageDetails = coverage.Text.Trim(),
+                });
+                if (id > 0)
+                {
+                    _audit.LogPatient(_me.PatientID, "Added insurance record");
+                    UiHelpers.Info("Insurance added.");
+                    provider.Clear(); policy.Clear(); coverage.Clear();
+                    Reload();
+                }
+                else UiHelpers.Error("Could not save insurance.");
+            }));
+
+            _audit.LogPatient(_me.PatientID, "Viewed insurance");
             return tab;
         }
     }
