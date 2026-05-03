@@ -123,8 +123,8 @@ namespace EMR.Backend.UI
                 SizeMode  = TabSizeMode.Fixed,
                 DrawMode  = TabDrawMode.OwnerDrawFixed,
                 Alignment = verticalSidebar ? TabAlignment.Left : TabAlignment.Top,
-                Multiline = !verticalSidebar,
-                ItemSize  = verticalSidebar ? new Size(36, 200) : new Size(220, 36),
+                Multiline = true,
+                ItemSize  = verticalSidebar ? new Size(45, 200) : new Size(88, 36),
             };
 
             tc.DrawItem += (sender, e) =>
