@@ -47,7 +47,7 @@ namespace EMR.Backend.UI
             top.Controls.Add(UiHelpers.MakeButton("Logout", 860, 14, 110, (_, __) => Close()));
             Controls.Add(top);
 
-            var tabs = UiHelpers.MakeTabControl();
+            var tabs = UiHelpers.MakeTabControl(verticalSidebar: true);
             tabs.TabPages.Add(BuildHistoryTab());
             tabs.TabPages.Add(BuildProfileTab());
             tabs.TabPages.Add(BuildAppointmentsTab());
@@ -68,7 +68,6 @@ namespace EMR.Backend.UI
         private TabPage BuildHistoryTab()
         {
             var tab = new TabPage("Medical History (FR-03)");
-            tab.AutoScroll = true;
             var grid = UiHelpers.MakeGrid(10, 10, 950, 550);
             grid.Dock = DockStyle.Fill;
             tab.Controls.Add(grid);
@@ -130,7 +129,6 @@ namespace EMR.Backend.UI
         private TabPage BuildAppointmentsTab()
         {
             var tab = new TabPage("Appointments (FR-05)");
-            tab.AutoScroll = true;
             var grid = UiHelpers.MakeGrid(0, 0, 0, 0);
             grid.Dock = DockStyle.Fill;
             tab.Controls.Add(grid);
@@ -143,7 +141,6 @@ namespace EMR.Backend.UI
         private TabPage BuildPrescriptionsTab()
         {
             var tab = new TabPage("Prescriptions (FR-06)");
-            tab.AutoScroll = true;
             var grid = UiHelpers.MakeGrid(0, 0, 0, 0);
             grid.Dock = DockStyle.Fill;
             tab.Controls.Add(grid);
@@ -156,7 +153,6 @@ namespace EMR.Backend.UI
         private TabPage BuildChronicTab()
         {
             var tab = new TabPage("Chronic Conditions (FR-07)");
-            tab.AutoScroll = true;
             var grid = UiHelpers.MakeGrid(0, 0, 0, 0);
             grid.Dock = DockStyle.Fill;
             tab.Controls.Add(grid);
@@ -221,7 +217,6 @@ namespace EMR.Backend.UI
         private TabPage BuildLabResultsTab()
         {
             var tab = new TabPage("Lab Results");
-            tab.AutoScroll = true;
             var grid = UiHelpers.MakeGrid(0, 0, 0, 0);
             grid.Dock = DockStyle.Fill;
             tab.Controls.Add(grid);
@@ -233,7 +228,6 @@ namespace EMR.Backend.UI
         private TabPage BuildNotificationsTab()
         {
             var tab = new TabPage("Notifications");
-            tab.AutoScroll = true;
             var grid = UiHelpers.MakeGrid(0, 0, 0, 0);
             grid.Dock = DockStyle.Fill;
             tab.Controls.Add(grid);
@@ -244,7 +238,6 @@ namespace EMR.Backend.UI
         private TabPage BuildAllergiesTab()
         {
             var tab = new TabPage("Allergies");
-            tab.AutoScroll = true;
             var grid = UiHelpers.MakeGrid(0, 0, 0, 0);
             grid.Dock = DockStyle.Fill;
             tab.Controls.Add(grid);
@@ -256,7 +249,6 @@ namespace EMR.Backend.UI
         private TabPage BuildImmunizationsTab()
         {
             var tab = new TabPage("Immunizations");
-            tab.AutoScroll = true;
             var grid = UiHelpers.MakeGrid(0, 0, 0, 0);
             grid.Dock = DockStyle.Fill;
             tab.Controls.Add(grid);

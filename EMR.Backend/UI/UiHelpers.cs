@@ -114,16 +114,17 @@ namespace EMR.Backend.UI
         /// TabControl with owner-drawn tabs so the strip is always visible on
         /// Windows 11 (the default visual styles wash it out entirely).
         /// </summary>
-        public static TabControl MakeTabControl()
+        public static TabControl MakeTabControl(bool verticalSidebar = false)
         {
             var tc = new TabControl
             {
                 Dock      = DockStyle.Fill,
                 Font      = Body,
                 SizeMode  = TabSizeMode.Fixed,
-                ItemSize  = new Size(220, 36),
                 DrawMode  = TabDrawMode.OwnerDrawFixed,
-                Multiline = true,
+                Alignment = verticalSidebar ? TabAlignment.Left : TabAlignment.Top,
+                Multiline = !verticalSidebar,
+                ItemSize  = verticalSidebar ? new Size(36, 200) : new Size(220, 36),
             };
 
             tc.DrawItem += (sender, e) =>
