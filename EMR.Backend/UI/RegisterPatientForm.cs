@@ -24,9 +24,10 @@ namespace EMR.Backend.UI
         {
             Text = "EMRKS - New Patient Registration";
             StartPosition = FormStartPosition.CenterParent;
-            Size = new Size(540, 560);
+            Size = new Size(560, 660);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             MaximizeBox = false;
+            AutoScaleMode = AutoScaleMode.None;
 
             Controls.Add(new Label
             {
@@ -36,7 +37,7 @@ namespace EMR.Backend.UI
                 Font = UiHelpers.Title,
             });
 
-            int y = 60, gap = 35;
+            int y = 60, gap = 44;
             void AddRow(string label, Control input)
             {
                 Controls.Add(UiHelpers.MakeLabel(label, 20, y));

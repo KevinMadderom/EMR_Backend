@@ -22,49 +22,50 @@ namespace EMR.Backend.UI
         {
             Text = "EMRKS - Login";
             StartPosition = FormStartPosition.CenterScreen;
-            Size = new Size(420, 360);
+            Size = new Size(460, 420);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             MaximizeBox = false;
+            AutoScaleMode = AutoScaleMode.None;
 
             Controls.Add(new Label
             {
                 Text = "Electronic Medical Record Keeping System",
-                Location = new Point(20, 16),
-                Size = new Size(380, 30),
+                Location = new Point(20, 18),
+                Size = new Size(420, 34),
                 Font = UiHelpers.Title,
                 TextAlign = ContentAlignment.MiddleCenter,
             });
 
             // Role selector
-            _rbPatient = new RadioButton { Text = "Patient", Location = new Point(60, 70),  Size = new Size(120, 24), Checked = true, Font = UiHelpers.Body };
-            _rbStaff   = new RadioButton { Text = "Staff / Doctor / Admin", Location = new Point(190, 70), Size = new Size(200, 24), Font = UiHelpers.Body };
+            _rbPatient = new RadioButton { Text = "Patient", Location = new Point(60, 72), Size = new Size(130, 28), Checked = true, Font = UiHelpers.Body };
+            _rbStaff   = new RadioButton { Text = "Staff / Doctor / Admin", Location = new Point(210, 72), Size = new Size(210, 28), Font = UiHelpers.Body };
             Controls.Add(_rbPatient);
             Controls.Add(_rbStaff);
 
             // Username / Password
-            Controls.Add(UiHelpers.MakeLabel("Username:", 40, 110));
-            _txtUser = UiHelpers.MakeText(140, 108, 230);
+            Controls.Add(UiHelpers.MakeLabel("Username:", 40, 120));
+            _txtUser = UiHelpers.MakeText(180, 118, 240);
             Controls.Add(_txtUser);
 
-            Controls.Add(UiHelpers.MakeLabel("Password:", 40, 150));
-            _txtPass = UiHelpers.MakeText(140, 148, 230, passwordChar: '*');
+            Controls.Add(UiHelpers.MakeLabel("Password:", 40, 168));
+            _txtPass = UiHelpers.MakeText(180, 166, 240, passwordChar: '*');
             Controls.Add(_txtPass);
 
             // Buttons
-            var btnLogin    = UiHelpers.MakeButton("Login",              40,  200, 150, OnLogin);
-            var btnRegister = UiHelpers.MakeButton("Register (Patient)", 220, 200, 150, OnRegister);
-            var btnExit     = UiHelpers.MakeButton("Exit",               220, 250, 150, (s, e) => Close());
+            var btnLogin    = UiHelpers.MakeButton("Login",              40,  220, 160, OnLogin);
+            var btnRegister = UiHelpers.MakeButton("Register (Patient)", 240, 220, 170, OnRegister);
+            var btnExit     = UiHelpers.MakeButton("Exit",               240, 272, 170, (s, e) => Close());
             Controls.Add(btnLogin);
             Controls.Add(btnRegister);
             Controls.Add(btnExit);
 
-            AcceptButton = btnLogin; // Enter key triggers login
+            AcceptButton = btnLogin;
 
             Controls.Add(new Label
             {
                 Text = "Default admin: admin / admin123  (change after first login)",
-                Location = new Point(20, 290),
-                Size = new Size(380, 20),
+                Location = new Point(20, 332),
+                Size = new Size(420, 22),
                 ForeColor = Color.Gray,
                 TextAlign = ContentAlignment.MiddleCenter,
                 Font = new Font("Segoe UI", 8.25F, FontStyle.Italic),

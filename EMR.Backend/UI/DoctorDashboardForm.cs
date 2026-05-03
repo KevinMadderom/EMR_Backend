@@ -20,6 +20,8 @@ namespace EMR.Backend.UI
         private readonly PrescriptionRepository  _rxRepo      = new PrescriptionRepository();
         private readonly LabResultRepository     _labRepo     = new LabResultRepository();
         private readonly MedicationRepository    _medRepo     = new MedicationRepository();
+        private readonly AllergyRepository       _allergyRepo = new AllergyRepository();
+        private readonly ImmunizationRepository  _immunRepo   = new ImmunizationRepository();
         private readonly AuditLogger             _audit       = new AuditLogger();
 
         private ListBox _patientList;
@@ -106,6 +108,8 @@ namespace EMR.Backend.UI
             _tabs.TabPages.Add(BuildPrescriptionsTab());
             _tabs.TabPages.Add(BuildLabsTab());
             _tabs.TabPages.Add(BuildChronicTab());
+            _tabs.TabPages.Add(BuildAllergiesTab());
+            _tabs.TabPages.Add(BuildImmunizationsTab());
         }
 
         // FR-10
@@ -175,10 +179,76 @@ namespace EMR.Backend.UI
         private TabPage BuildPrescriptionsTab()
         {
             var tab = new TabPage("Prescriptions (FR-12)");
-            var grid = UiHelpers.MakeGrid(0, 0, 0, 0); grid.Dock = DockStyle.Fill;
+
+            var grid = UiHelpers.MakeGrid(10, 10, 0, 240);
+            grid.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             grid.DataSource = _rxRepo.GetByPatient(_selected.PatientID);
             tab.Controls.Add(grid);
+
+            int y = 260;
+            tab.Controls.Add(UiHelpers.MakeLabel("Write a Prescription", 10, y, 300, true)); y += 28;
+
+            tab.Controls.Add(UiHelpers.MakeLabel("Medication", 10, y));
+            var cboMed = new ComboBox
+            {
+                Location = new Point(140, y - 2), Size = new Size(400, 24),
+                Font = UiHelpers.Body, DropDownStyle = ComboBoxStyle.DropDownList,
+            };
+            foreach (var m in _medRepo.GetAll())
+                cboMed.Items.Add(new MedItem(m));
+            if (cboMed.Items.Count > 0) cboMed.SelectedIndex = 0;
+            tab.Controls.Add(cboMed); y += 34;
+
+            tab.Controls.Add(UiHelpers.MakeLabel("Dosage", 10, y));
+            var dosage = new TextBox { Location = new Point(140, y - 2), Size = new Size(300, 24), Font = UiHelpers.Body };
+            tab.Controls.Add(dosage); y += 34;
+
+            tab.Controls.Add(UiHelpers.MakeLabel("Refills", 10, y));
+            var refills = new NumericUpDown
+            {
+                Location = new Point(140, y - 2), Size = new Size(80, 24),
+                Font = UiHelpers.Body, Minimum = 0, Maximum = 12, Value = 0,
+            };
+            tab.Controls.Add(refills); y += 34;
+
+            var chkPharmacy = new CheckBox
+            {
+                Text = "Send to pharmacy immediately",
+                Location = new Point(140, y), Size = new Size(280, 24), Font = UiHelpers.Body,
+            };
+            tab.Controls.Add(chkPharmacy); y += 34;
+
+            tab.Controls.Add(UiHelpers.MakeButton("Prescribe (FR-12)", 140, y, 180, (s, e) =>
+            {
+                if (cboMed.SelectedItem is not MedItem med) { UiHelpers.Error("Select a medication."); return; }
+                if (string.IsNullOrWhiteSpace(dosage.Text)) { UiHelpers.Error("Dosage is required."); return; }
+                int id = _rxRepo.AddPrescription(new Prescription
+                {
+                    PatientID        = _selected.PatientID,
+                    StaffID          = _me.StaffID,
+                    MedicationID     = med.Id,
+                    DateIssued       = DateTime.Today,
+                    Dosage           = dosage.Text.Trim(),
+                    RefillsRemaining = (int)refills.Value,
+                    SentToPharmacy   = chkPharmacy.Checked,
+                });
+                if (id > 0)
+                {
+                    _audit.LogStaff(_me.StaffID, $"Prescribed medication {med.Id} for patient {_selected.PatientID} (FR-12)");
+                    UiHelpers.Info("Prescription written.");
+                    BuildPatientTabs();
+                }
+                else UiHelpers.Error("Could not save prescription.");
+            }));
             return tab;
+        }
+
+        private class MedItem
+        {
+            public int Id { get; }
+            private readonly string _name;
+            public MedItem(Medication m) { Id = m.MedicationID; _name = m.MedicationName; }
+            public override string ToString() => _name;
         }
 
         // FR-14
@@ -253,6 +323,109 @@ namespace EMR.Backend.UI
                 _audit.LogStaff(_me.StaffID, "Viewed my appointments (FR-11)");
                 f.ShowDialog(this);
             }
+        }
+
+        private TabPage BuildAllergiesTab()
+        {
+            var tab = new TabPage("Allergies");
+
+            DataGridView grid = null;
+            void Reload() { grid.DataSource = _allergyRepo.GetByPatient(_selected.PatientID); }
+
+            grid = UiHelpers.MakeGrid(10, 10, 0, 200);
+            grid.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            Reload();
+            tab.Controls.Add(grid);
+
+            int y = 220;
+            tab.Controls.Add(UiHelpers.MakeLabel("Add Allergy", 10, y, 200, true)); y += 28;
+
+            tab.Controls.Add(UiHelpers.MakeLabel("Allergen", 10, y));
+            var name = new TextBox { Location = new Point(120, y - 2), Size = new Size(260, 24), Font = UiHelpers.Body };
+            tab.Controls.Add(name); y += 34;
+
+            tab.Controls.Add(UiHelpers.MakeLabel("Severity", 10, y));
+            var sev = new ComboBox
+            {
+                Location = new Point(120, y - 2), Size = new Size(160, 24),
+                Font = UiHelpers.Body, DropDownStyle = ComboBoxStyle.DropDownList,
+            };
+            sev.Items.AddRange(new object[] { "Mild", "Moderate", "Severe" });
+            sev.SelectedIndex = 0;
+            tab.Controls.Add(sev); y += 34;
+
+            tab.Controls.Add(UiHelpers.MakeButton("Add Allergy", 120, y, 140, (s, e) =>
+            {
+                if (string.IsNullOrWhiteSpace(name.Text)) { UiHelpers.Error("Allergen name required."); return; }
+                int id = _allergyRepo.AddAllergy(new Allergy
+                {
+                    PatientID    = _selected.PatientID,
+                    AllergenName = name.Text.Trim(),
+                    Severity     = (string)sev.SelectedItem,
+                });
+                if (id > 0) { name.Clear(); Reload(); }
+                else UiHelpers.Error("Could not add allergy.");
+            }));
+
+            tab.Controls.Add(UiHelpers.MakeButton("Delete Selected", 280, y, 160, (s, e) =>
+            {
+                if (grid.CurrentRow?.DataBoundItem is Allergy a)
+                {
+                    if (!UiHelpers.Confirm($"Delete allergy '{a.AllergenName}'?")) return;
+                    if (_allergyRepo.DeleteAllergy(a.AllergyID)) Reload();
+                    else UiHelpers.Error("Could not delete allergy.");
+                }
+                else UiHelpers.Error("Select an allergy row first.");
+            }));
+            return tab;
+        }
+
+        private TabPage BuildImmunizationsTab()
+        {
+            var tab = new TabPage("Immunizations");
+
+            DataGridView grid = null;
+            void Reload() { grid.DataSource = _immunRepo.GetByPatient(_selected.PatientID); }
+
+            grid = UiHelpers.MakeGrid(10, 10, 0, 200);
+            grid.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            Reload();
+            tab.Controls.Add(grid);
+
+            int y = 220;
+            tab.Controls.Add(UiHelpers.MakeLabel("Record Immunization", 10, y, 260, true)); y += 28;
+
+            tab.Controls.Add(UiHelpers.MakeLabel("Vaccine", 10, y));
+            var vaccine = new TextBox { Location = new Point(120, y - 2), Size = new Size(300, 24), Font = UiHelpers.Body };
+            tab.Controls.Add(vaccine); y += 34;
+
+            tab.Controls.Add(UiHelpers.MakeLabel("Date given", 10, y));
+            var datePicker = new DateTimePicker
+            {
+                Location = new Point(120, y - 2), Size = new Size(200, 24),
+                Font = UiHelpers.Body, Format = DateTimePickerFormat.Short, Value = DateTime.Today,
+            };
+            tab.Controls.Add(datePicker); y += 34;
+
+            tab.Controls.Add(UiHelpers.MakeButton("Record (FR-13)", 120, y, 160, (s, e) =>
+            {
+                if (string.IsNullOrWhiteSpace(vaccine.Text)) { UiHelpers.Error("Vaccine name required."); return; }
+                int id = _immunRepo.AddImmunization(new Immunization
+                {
+                    PatientID        = _selected.PatientID,
+                    VaccineName      = vaccine.Text.Trim(),
+                    DateAdministered = datePicker.Value.Date,
+                    AdminStaffID     = _me.StaffID,
+                });
+                if (id > 0)
+                {
+                    _audit.LogStaff(_me.StaffID, $"Recorded immunization for patient {_selected.PatientID}");
+                    vaccine.Clear();
+                    Reload();
+                }
+                else UiHelpers.Error("Could not record immunization.");
+            }));
+            return tab;
         }
 
         private class PatientItem

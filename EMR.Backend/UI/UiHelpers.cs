@@ -107,19 +107,44 @@ namespace EMR.Backend.UI
             return g;
         }
 
+        private static readonly Color TabActive   = Color.FromArgb(45, 90, 160);
+        private static readonly Color TabInactive = Color.FromArgb(100, 130, 180);
+
         /// <summary>
-        /// TabControl whose tab strip is visible against Windows 11 light themes.
+        /// TabControl with owner-drawn tabs so the strip is always visible on
+        /// Windows 11 (the default visual styles wash it out entirely).
         /// </summary>
         public static TabControl MakeTabControl()
         {
-            return new TabControl
+            var tc = new TabControl
             {
-                Dock = DockStyle.Fill,
-                Font = Header,
-                Appearance = TabAppearance.Normal,
-                SizeMode = TabSizeMode.Fixed,
-                ItemSize = new Size(180, 28),
+                Dock      = DockStyle.Fill,
+                Font      = Body,
+                SizeMode  = TabSizeMode.Fixed,
+                ItemSize  = new Size(220, 36),
+                DrawMode  = TabDrawMode.OwnerDrawFixed,
+                Multiline = true,
             };
+
+            tc.DrawItem += (sender, e) =>
+            {
+                var tab  = (TabControl)sender;
+                bool sel = e.Index == tab.SelectedIndex;
+                var bg   = sel ? TabActive : TabInactive;
+                using var brush = new SolidBrush(bg);
+                e.Graphics.FillRectangle(brush, e.Bounds);
+                var text = tab.TabPages[e.Index].Text;
+                var tf   = new System.Drawing.StringFormat
+                {
+                    Alignment     = StringAlignment.Center,
+                    LineAlignment = StringAlignment.Center,
+                };
+                using var textBrush = new SolidBrush(Color.White);
+                var font = sel ? Header : Body;
+                e.Graphics.DrawString(text, font, textBrush, e.Bounds, tf);
+            };
+
+            return tc;
         }
     }
 }
