@@ -68,6 +68,7 @@ namespace EMR.Backend.UI
         private TabPage BuildHistoryTab()
         {
             var tab = new TabPage("Medical History (FR-03)");
+            tab.AutoScroll = true;
             var grid = UiHelpers.MakeGrid(10, 10, 950, 550);
             grid.Dock = DockStyle.Fill;
             tab.Controls.Add(grid);
@@ -80,6 +81,7 @@ namespace EMR.Backend.UI
         private TabPage BuildProfileTab()
         {
             var tab = new TabPage("Profile (FR-04)");
+            tab.AutoScroll = true;
 
             int y = 20, gap = 44;
             TextBox first = null, last = null, gender = null, addr = null, phone = null, email = null, emergency = null;
@@ -128,6 +130,7 @@ namespace EMR.Backend.UI
         private TabPage BuildAppointmentsTab()
         {
             var tab = new TabPage("Appointments (FR-05)");
+            tab.AutoScroll = true;
             var grid = UiHelpers.MakeGrid(0, 0, 0, 0);
             grid.Dock = DockStyle.Fill;
             tab.Controls.Add(grid);
@@ -140,6 +143,7 @@ namespace EMR.Backend.UI
         private TabPage BuildPrescriptionsTab()
         {
             var tab = new TabPage("Prescriptions (FR-06)");
+            tab.AutoScroll = true;
             var grid = UiHelpers.MakeGrid(0, 0, 0, 0);
             grid.Dock = DockStyle.Fill;
             tab.Controls.Add(grid);
@@ -152,6 +156,7 @@ namespace EMR.Backend.UI
         private TabPage BuildChronicTab()
         {
             var tab = new TabPage("Chronic Conditions (FR-07)");
+            tab.AutoScroll = true;
             var grid = UiHelpers.MakeGrid(0, 0, 0, 0);
             grid.Dock = DockStyle.Fill;
             tab.Controls.Add(grid);
@@ -177,6 +182,7 @@ namespace EMR.Backend.UI
         private TabPage BuildBillingTab()
         {
             var tab = new TabPage("Billing (FR-08)");
+            tab.AutoScroll = true;
 
             var balance = _billRepo.GetBalance(_me.PatientID);
             var lblBalance = new Label
@@ -215,6 +221,7 @@ namespace EMR.Backend.UI
         private TabPage BuildLabResultsTab()
         {
             var tab = new TabPage("Lab Results");
+            tab.AutoScroll = true;
             var grid = UiHelpers.MakeGrid(0, 0, 0, 0);
             grid.Dock = DockStyle.Fill;
             tab.Controls.Add(grid);
@@ -226,6 +233,7 @@ namespace EMR.Backend.UI
         private TabPage BuildNotificationsTab()
         {
             var tab = new TabPage("Notifications");
+            tab.AutoScroll = true;
             var grid = UiHelpers.MakeGrid(0, 0, 0, 0);
             grid.Dock = DockStyle.Fill;
             tab.Controls.Add(grid);
@@ -236,6 +244,7 @@ namespace EMR.Backend.UI
         private TabPage BuildAllergiesTab()
         {
             var tab = new TabPage("Allergies");
+            tab.AutoScroll = true;
             var grid = UiHelpers.MakeGrid(0, 0, 0, 0);
             grid.Dock = DockStyle.Fill;
             tab.Controls.Add(grid);
@@ -247,6 +256,7 @@ namespace EMR.Backend.UI
         private TabPage BuildImmunizationsTab()
         {
             var tab = new TabPage("Immunizations");
+            tab.AutoScroll = true;
             var grid = UiHelpers.MakeGrid(0, 0, 0, 0);
             grid.Dock = DockStyle.Fill;
             tab.Controls.Add(grid);
@@ -258,6 +268,7 @@ namespace EMR.Backend.UI
         private TabPage BuildInsuranceTab()
         {
             var tab = new TabPage("Insurance");
+            tab.AutoScroll = true;
 
             DataGridView grid = null;
             void Reload() { grid.DataSource = _insurRepo.GetByPatient(_me.PatientID); }

@@ -11,17 +11,22 @@
     <StartupObject>EMR.Backend.Program</StartupObject>
   </PropertyGroup>
 
+  <Target Name="CopyAppSettingsToOutput" AfterTargets="Build">
+    <Copy SourceFiles="appsettings.json"
+          DestinationFolder="$(OutDir)"
+          SkipUnchangedFiles="true"
+          Condition="Exists('appsettings.json')" />
+    <Copy SourceFiles="appsettings.example.json"
+          DestinationFolder="$(OutDir)"
+          SkipUnchangedFiles="true"
+          Condition="Exists('appsettings.example.json')" />
+  </Target>
+
   <ItemGroup>
     <PackageReference Include="MySql.Data" Version="9.7.0" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="appsettings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>

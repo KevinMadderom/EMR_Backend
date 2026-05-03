@@ -118,11 +118,12 @@ namespace EMR.Backend.UI
         {
             var tc = new TabControl
             {
-                Dock     = DockStyle.Fill,
-                Font     = Body,
-                SizeMode = TabSizeMode.Fixed,
-                ItemSize = new Size(220, 36),
-                DrawMode = TabDrawMode.OwnerDrawFixed,
+                Dock      = DockStyle.Fill,
+                Font      = Body,
+                SizeMode  = TabSizeMode.Fixed,
+                ItemSize  = new Size(220, 36),
+                DrawMode  = TabDrawMode.OwnerDrawFixed,
+                Multiline = true,
             };
 
             tc.DrawItem += (sender, e) =>
