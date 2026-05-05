@@ -173,7 +173,7 @@ namespace EMR.Backend.UI
                 });
             }
             else grid.DataSource = rows;
-            _audit.LogPatient(_me.PatientID, "Viewed chronic conditions (FR-07)");
+            _audit.LogPatient(_me.PatientID, "Viewed chronic conditions");
             return tab;
         }
 
@@ -239,7 +239,7 @@ namespace EMR.Backend.UI
 
             tab.Controls.Add(table);
 
-            _audit.LogPatient(_me.PatientID, "Viewed billing (FR-08)");
+            _audit.LogPatient(_me.PatientID, "Viewed billing");
             return tab;
         }
 

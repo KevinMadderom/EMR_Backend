@@ -148,7 +148,7 @@ namespace EMR.Backend.UI
                 if (!int.TryParse(idBox.Text, out int sid)) { UiHelpers.Error("Pick a staff row."); return; }
                 if (_staffRepo.UpdateAuthorizationLevel(sid, (string)cboLevel.SelectedItem))
                 {
-                    _audit.LogStaff(_me.StaffID, $"Set permission of staff {sid} to {cboLevel.SelectedItem} (FR-18)");
+                    _audit.LogStaff(_me.StaffID, $"Set permission of staff {sid} to {cboLevel.SelectedItem}");
                     UiHelpers.Info("Permission updated.");
                     grid.DataSource = _staffRepo.GetAllStaff();
                 }
@@ -162,7 +162,7 @@ namespace EMR.Backend.UI
                 if (!UiHelpers.Confirm("Permanently delete this staff member?")) return;
                 if (_staffRepo.DeleteStaff(sid))
                 {
-                    _audit.LogStaff(_me.StaffID, $"Deleted staff {sid} (FR-17)");
+                    _audit.LogStaff(_me.StaffID, $"Deleted staff {sid}");
                     UiHelpers.Info("Staff deleted.");
                     grid.DataSource = _staffRepo.GetAllStaff();
                 }

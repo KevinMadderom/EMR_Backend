@@ -117,7 +117,7 @@ namespace EMR.Backend.UI
                 });
                 if (newId > 0)
                 {
-                    _audit.LogStaff(_me.StaffID, $"Scheduled appointment #{newId} for patient {p.Id} (FR-15)");
+                    _audit.LogStaff(_me.StaffID, $"Scheduled appointment #{newId} for patient {p.Id}");
                     UiHelpers.Info($"Appointment #{newId} scheduled.");
                 }
                 else UiHelpers.Error("Could not schedule appointment.");
@@ -169,7 +169,7 @@ namespace EMR.Backend.UI
                 if (cbo.SelectedItem is IdItem item)
                 {
                     RefreshGrids();
-                    _audit.LogStaff(_me.StaffID, $"Staff viewed billing for patient {item.Id} (FR-16)");
+                    _audit.LogStaff(_me.StaffID, $"Staff viewed billing for patient {item.Id}");
                 }
             };
 
@@ -206,7 +206,7 @@ namespace EMR.Backend.UI
                 });
                 if (id > 0)
                 {
-                    _audit.LogStaff(_me.StaffID, $"Created bill #{id} for patient {patient.Id} (FR-16)");
+                    _audit.LogStaff(_me.StaffID, $"Created bill #{id} for patient {patient.Id}");
                     UiHelpers.Info($"Bill #{id} created.");
                     amount.Value = 0;
                     RefreshGrids();
@@ -265,7 +265,7 @@ namespace EMR.Backend.UI
                 });
                 if (id > 0)
                 {
-                    _audit.LogStaff(_me.StaffID, $"Recorded payment #{id} for patient {patient.Id} (FR-16)");
+                    _audit.LogStaff(_me.StaffID, $"Recorded payment #{id} for patient {patient.Id}");
                     UiHelpers.Info($"Payment #{id} recorded.");
                     payAmount.Value = 0;
                     RefreshGrids();

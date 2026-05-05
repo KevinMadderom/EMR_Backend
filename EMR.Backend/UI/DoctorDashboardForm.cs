@@ -243,7 +243,7 @@ namespace EMR.Backend.UI
                 });
                 if (id > 0)
                 {
-                    _audit.LogStaff(_me.StaffID, $"Prescribed medication {med.Id} for patient {_selected.PatientID} (FR-12)");
+                    _audit.LogStaff(_me.StaffID, $"Prescribed medication {med.Id} for patient {_selected.PatientID}");
                     UiHelpers.Info("Prescription written.");
                     BuildPatientTabs();
                 }
@@ -303,7 +303,7 @@ namespace EMR.Backend.UI
                 });
                 if (id > 0)
                 {
-                    _audit.LogStaff(_me.StaffID, $"Submitted LabResult #{id} for patient {_selected.PatientID} (FR-14)");
+                    _audit.LogStaff(_me.StaffID, $"Submitted LabResult #{id} for patient {_selected.PatientID}");
                     UiHelpers.Info("Lab result submitted.");
                     BuildPatientTabs();
                 }
@@ -329,7 +329,7 @@ namespace EMR.Backend.UI
                 "My Upcoming & Past Appointments",
                 _aptRepo.GetByStaff(_me.StaffID)))
             {
-                _audit.LogStaff(_me.StaffID, "Viewed my appointments (FR-11)");
+                _audit.LogStaff(_me.StaffID, "Viewed my appointments");
                 f.ShowDialog(this);
             }
         }

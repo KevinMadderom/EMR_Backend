@@ -43,7 +43,7 @@ namespace EMR.Backend.Services
             if (newId <= 0)
                 throw new Exception("Failed to register patient.");
             p.PatientID = newId;
-            _audit.LogPatient(newId, "Patient registered (FR-01)");
+            _audit.LogPatient(newId, "Patient registered");
             return p;
         }
 
@@ -52,7 +52,7 @@ namespace EMR.Backend.Services
         {
             var p = _patientRepo.GetPatientByUsername(username);
             if (p == null || !VerifyPassword(password, p.PasswordHash)) return null;
-            _audit.LogPatient(p.PatientID, "Patient login (FR-02)");
+            _audit.LogPatient(p.PatientID, "Patient login");
             return p;
         }
 
@@ -71,7 +71,7 @@ namespace EMR.Backend.Services
             int newId = _staffRepo.AddStaff(s);
             if (newId <= 0) throw new Exception("Failed to add staff.");
             s.StaffID = newId;
-            _audit.LogStaff(newId, $"Staff '{s.Username}' created (FR-17)");
+            _audit.LogStaff(newId, $"Staff '{s.Username}' created");
             return s;
         }
 
@@ -80,7 +80,7 @@ namespace EMR.Backend.Services
         {
             var s = _staffRepo.GetStaffByUsername(username);
             if (s == null || !VerifyPassword(password, s.PasswordHash)) return null;
-            _audit.LogStaff(s.StaffID, $"Staff login as {s.Role} (FR-09)");
+            _audit.LogStaff(s.StaffID, $"Staff login as {s.Role}");
             return s;
         }
     }
