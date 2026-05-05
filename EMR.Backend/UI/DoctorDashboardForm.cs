@@ -112,8 +112,6 @@ namespace EMR.Backend.UI
         private void BuildPatientTabs()
         {
             _tabs.TabPages.Clear();
-            _tabs.TabPages.Add(BuildRecordsTab());
-            _tabs.TabPages.Add(BuildAddRecordTab());
             _tabs.TabPages.Add(BuildPrescriptionsTab());
             _tabs.TabPages.Add(BuildLabsTab());
             _tabs.TabPages.Add(BuildChronicTab());
@@ -122,6 +120,7 @@ namespace EMR.Backend.UI
         }
 
         // FR-10
+        // NOT IN USE
         private TabPage BuildRecordsTab()
         {
             var tab = new TabPage("Records");
@@ -132,6 +131,7 @@ namespace EMR.Backend.UI
         }
 
         // §4.2: Doctor adds a new medical record.
+        // NOT IN USE
         private TabPage BuildAddRecordTab()
         {
             var tab = new TabPage("Add Record");
@@ -200,7 +200,7 @@ namespace EMR.Backend.UI
             tab.Controls.Add(UiHelpers.MakeLabel("Medication", 10, y));
             var cboMed = new ComboBox
             {
-                Location = new Point(140, y - 2), Size = new Size(400, 24),
+                Location = new Point(140, y - 2), Size = new Size(200, 24),
                 Font = UiHelpers.Body, DropDownStyle = ComboBoxStyle.DropDownList,
             };
             foreach (var m in _medRepo.GetAll())
@@ -209,7 +209,7 @@ namespace EMR.Backend.UI
             tab.Controls.Add(cboMed); y += 34;
 
             tab.Controls.Add(UiHelpers.MakeLabel("Dosage", 10, y));
-            var dosage = new TextBox { Location = new Point(140, y - 2), Size = new Size(300, 24), Font = UiHelpers.Body };
+            var dosage = new TextBox { Location = new Point(140, y - 2), Size = new Size(200, 24), Font = UiHelpers.Body };
             tab.Controls.Add(dosage); y += 34;
 
             tab.Controls.Add(UiHelpers.MakeLabel("Refills", 10, y));
@@ -349,14 +349,14 @@ namespace EMR.Backend.UI
             int y = 220;
             tab.Controls.Add(UiHelpers.MakeLabel("Add Allergy", 10, y, 200, true)); y += 28;
 
-            tab.Controls.Add(UiHelpers.MakeLabel("Allergen", 10, y));
-            var name = new TextBox { Location = new Point(120, y - 2), Size = new Size(260, 24), Font = UiHelpers.Body };
+            tab.Controls.Add(UiHelpers.MakeLabel("Allergen", 10, y, 100, false));
+            var name = new TextBox { Location = new Point(120, y - 2), Size = new Size(180, 24), Font = UiHelpers.Body };
             tab.Controls.Add(name); y += 34;
 
-            tab.Controls.Add(UiHelpers.MakeLabel("Severity", 10, y));
+            tab.Controls.Add(UiHelpers.MakeLabel("Severity", 10, y, 100, false));
             var sev = new ComboBox
             {
-                Location = new Point(120, y - 2), Size = new Size(160, 24),
+                Location = new Point(120, y - 2), Size = new Size(120, 24),
                 Font = UiHelpers.Body, DropDownStyle = ComboBoxStyle.DropDownList,
             };
             sev.Items.AddRange(new object[] { "Mild", "Moderate", "Severe" });
@@ -404,11 +404,11 @@ namespace EMR.Backend.UI
             int y = 220;
             tab.Controls.Add(UiHelpers.MakeLabel("Record Immunization", 10, y, 260, true)); y += 28;
 
-            tab.Controls.Add(UiHelpers.MakeLabel("Vaccine", 10, y));
+            tab.Controls.Add(UiHelpers.MakeLabel("Vaccine", 10, y, 100, false));
             var vaccine = new TextBox { Location = new Point(120, y - 2), Size = new Size(300, 24), Font = UiHelpers.Body };
             tab.Controls.Add(vaccine); y += 34;
 
-            tab.Controls.Add(UiHelpers.MakeLabel("Date given", 10, y));
+            tab.Controls.Add(UiHelpers.MakeLabel("Date given", 10, y, 100, false));
             var datePicker = new DateTimePicker
             {
                 Location = new Point(120, y - 2), Size = new Size(200, 24),
