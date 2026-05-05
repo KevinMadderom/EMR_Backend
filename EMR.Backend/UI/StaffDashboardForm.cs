@@ -37,13 +37,20 @@ namespace EMR.Backend.UI
                 Font = UiHelpers.Title,
             });
             top.Controls.Add(UiHelpers.MakeButton("Logout", 960, 14, 110, (_, __) => Close()));
-            Controls.Add(top);
 
             var tabs = UiHelpers.MakeTabControl();
             tabs.TabPages.Add(BuildScheduleTab());
             tabs.TabPages.Add(BuildBillingTab());
             tabs.TabPages.Add(BuildAllAppointmentsTab());
-            Controls.Add(tabs);
+
+            // WinForms docks children in REVERSE Z-order: the LAST control
+            // added is docked FIRST and claims its slice first. Add the Fill
+            // (tabs) first, then the top bar last so it carves out its 60 px
+            // before tabs claim the leftover -- otherwise the top bar's content
+            // is hidden behind the tab strip and the tab page is shifted up
+            // off-screen.
+            Controls.Add(tabs);   // Fill -- claims leftover
+            Controls.Add(top);    // Top, 60 px -- added last so it's docked first
 
             _audit.LogStaff(_me.StaffID, "Opened staff dashboard");
         }
@@ -134,14 +141,16 @@ namespace EMR.Backend.UI
 
             var balance = new Label { Location = new Point(540, 10), Size = new Size(380, 24), Font = UiHelpers.Header };
 
-            // Grids — top half of available area
-            var bills = UiHelpers.MakeGrid(10, 40, 510, 220);
-            bills.Anchor = AnchorStyles.Top | AnchorStyles.Left;
-            var pays = UiHelpers.MakeGrid(530, 40, 500, 220);
-            pays.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+            // Section labels sit ABOVE the grids; the grids start a few pixels
+            // below them so the labels don't overlap the grid column headers.
+            tab.Controls.Add(new Label { Text = "Bills", Location = new Point(10, 42), Size = new Size(200, 18), Font = UiHelpers.Body });
+            tab.Controls.Add(new Label { Text = "Payments", Location = new Point(530, 42), Size = new Size(200, 18), Font = UiHelpers.Body });
 
-            tab.Controls.Add(new Label { Text = "Bills", Location = new Point(10, 40), Size = new Size(200, 18), Font = UiHelpers.Body });
-            tab.Controls.Add(new Label { Text = "Payments", Location = new Point(530, 40), Size = new Size(200, 18), Font = UiHelpers.Body });
+            // Grids — top half of available area
+            var bills = UiHelpers.MakeGrid(10, 64, 510, 220);
+            bills.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+            var pays = UiHelpers.MakeGrid(530, 64, 500, 220);
+            pays.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             tab.Controls.Add(bills);
             tab.Controls.Add(pays);
 
@@ -165,7 +174,7 @@ namespace EMR.Backend.UI
             };
 
             // ---------- Create Bill ----------
-            int y = 270;
+            int y = 294;
             tab.Controls.Add(UiHelpers.MakeLabel("Create Bill", 10, y, 160, true)); y += 26;
 
             tab.Controls.Add(UiHelpers.MakeLabel("Total amount ($)", 10, y));
@@ -176,7 +185,7 @@ namespace EMR.Backend.UI
             };
             tab.Controls.Add(amount);
 
-            tab.Controls.Add(UiHelpers.MakeLabel("Status", 300, y));
+            tab.Controls.Add(UiHelpers.MakeLabel("Status", 300, y, 50));
             var billStatus = new ComboBox
             {
                 Location = new Point(360, y - 2), Size = new Size(140, 24),
@@ -209,7 +218,7 @@ namespace EMR.Backend.UI
             y += 44;
             tab.Controls.Add(UiHelpers.MakeLabel("Record Payment", 10, y, 200, true)); y += 26;
 
-            tab.Controls.Add(UiHelpers.MakeLabel("Billing ID", 10, y));
+            tab.Controls.Add(UiHelpers.MakeLabel("Billing ID", 10, y, 100));
             var billingId = new NumericUpDown
             {
                 Location = new Point(120, y - 2), Size = new Size(90, 24),
@@ -217,7 +226,7 @@ namespace EMR.Backend.UI
             };
             tab.Controls.Add(billingId);
 
-            tab.Controls.Add(UiHelpers.MakeLabel("Amount ($)", 230, y));
+            tab.Controls.Add(UiHelpers.MakeLabel("Amount ($)", 230, y, 80));
             var payAmount = new NumericUpDown
             {
                 Location = new Point(320, y - 2), Size = new Size(120, 24),
@@ -225,7 +234,7 @@ namespace EMR.Backend.UI
             };
             tab.Controls.Add(payAmount);
 
-            tab.Controls.Add(UiHelpers.MakeLabel("Method", 460, y));
+            tab.Controls.Add(UiHelpers.MakeLabel("Method", 460, y, 50));
             var method = new ComboBox
             {
                 Location = new Point(520, y - 2), Size = new Size(140, 24),
