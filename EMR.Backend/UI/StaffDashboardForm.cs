@@ -51,7 +51,7 @@ namespace EMR.Backend.UI
         // FR-15
         private TabPage BuildScheduleTab()
         {
-            var tab = new TabPage("Schedule Appointment / Test (FR-15)");
+            var tab = new TabPage("Schedule Appointment / Test");
 
             int y = 20;
             tab.Controls.Add(UiHelpers.MakeLabel("Patient", 20, y));
@@ -92,7 +92,7 @@ namespace EMR.Backend.UI
             cboType.SelectedIndex = 0;
             tab.Controls.Add(cboType); y += 54;
 
-            tab.Controls.Add(UiHelpers.MakeButton("Schedule (FR-15)", 160, y, 200, (s, e) =>
+            tab.Controls.Add(UiHelpers.MakeButton("Schedule", 160, y, 200, (s, e) =>
             {
                 if (cboPatient.SelectedItem is not IdItem p || cboStaff.SelectedItem is not IdItem st)
                 {
@@ -121,7 +121,7 @@ namespace EMR.Backend.UI
         // FR-16
         private TabPage BuildBillingTab()
         {
-            var tab = new TabPage("Patient Billing (FR-16)");
+            var tab = new TabPage("Patient Billing");
 
             tab.Controls.Add(new Label { Text = "Pick a patient:", Location = new Point(10, 10), Size = new Size(130, 24), Font = UiHelpers.Body });
             var cbo = new ComboBox
@@ -186,7 +186,7 @@ namespace EMR.Backend.UI
             billStatus.SelectedIndex = 0;
             tab.Controls.Add(billStatus); y += 34;
 
-            tab.Controls.Add(UiHelpers.MakeButton("Save Bill (FR-16)", 160, y, 180, (s, e) =>
+            tab.Controls.Add(UiHelpers.MakeButton("Save Bill", 160, y, 180, (s, e) =>
             {
                 if (cbo.SelectedItem is not IdItem patient) { UiHelpers.Error("Select a patient first."); return; }
                 int id = _billRepo.AddBilling(new Billing
@@ -242,7 +242,7 @@ namespace EMR.Backend.UI
                     billingId.Value = b.BillingID;
             };
 
-            tab.Controls.Add(UiHelpers.MakeButton("Record Payment (FR-16)", 120, y, 200, (s, e) =>
+            tab.Controls.Add(UiHelpers.MakeButton("Record Payment", 120, y, 200, (s, e) =>
             {
                 if (cbo.SelectedItem is not IdItem patient) { UiHelpers.Error("Select a patient first."); return; }
                 if (payAmount.Value <= 0) { UiHelpers.Error("Payment amount must be greater than zero."); return; }

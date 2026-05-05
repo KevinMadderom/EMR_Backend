@@ -69,7 +69,7 @@ namespace EMR.Backend.UI
             pUsers.Visible = true;
 
             // Nav buttons
-            string[] labels = { "Users  (FR-17/18)", "Add Staff  (FR-17)", "Audit Log", "DB Maintenance" };
+            string[] labels = { "Users", "Add Staff", "Audit Log", "DB Maintenance" };
             Panel[] pages   = { pUsers, pAdd, pAudit, pMaint };
             Button[] navBtns = new Button[4];
 
@@ -128,8 +128,8 @@ namespace EMR.Backend.UI
             cboLevel.SelectedIndex = 1;
             actions.Controls.Add(cboLevel);
 
-            var btnUpdate = UiHelpers.MakeButton("Update permission (FR-18)", 530, 8, 220);
-            var btnDelete = UiHelpers.MakeButton("Delete staff (FR-17)",      760, 8, 180);
+            var btnUpdate = UiHelpers.MakeButton("Update permission", 530, 8, 220);
+            var btnDelete = UiHelpers.MakeButton("Delete staff",      760, 8, 180);
             actions.Controls.Add(btnUpdate);
             actions.Controls.Add(btnDelete);
 
@@ -214,7 +214,7 @@ namespace EMR.Backend.UI
             password = new TextBox { UseSystemPasswordChar = true };
             Row("Initial password *", password);
 
-            panel.Controls.Add(UiHelpers.MakeButton("Create user (FR-17)", 180, y + 10, 200, (s, e) =>
+            panel.Controls.Add(UiHelpers.MakeButton("Create user", 180, y + 10, 200, (s, e) =>
             {
                 var missing = new System.Collections.Generic.List<string>();
                 if (string.IsNullOrWhiteSpace(firstName.Text)) missing.Add("First name");

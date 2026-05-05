@@ -45,19 +45,22 @@ namespace EMR.Backend.UI
                 Size = new Size(700, 30),
                 Font = UiHelpers.Title,
             });
-            top.Controls.Add(UiHelpers.MakeButton("My Appointments (FR-11)", 720, 14, 200, (_, __) => ShowMyAppointments()));
+            top.Controls.Add(UiHelpers.MakeButton("My Appointments", 720, 14, 200, (_, __) => ShowMyAppointments()));
             top.Controls.Add(UiHelpers.MakeButton("Logout", 1060, 14, 110, (_, __) => Close()));
-            Controls.Add(top);
 
-            // Left: patient search/list
+            // Left: patient search/list.
+            // WinForms docks children in REVERSE Z-order: the LAST control
+            // added is docked FIRST and claims its slice first. So inside the
+            // left panel we add the Fill (list) first, then the Top docks
+            // in visual bottom-to-top order (search, then header).
             var left = new Panel { Dock = DockStyle.Left, Width = 300, Padding = new Padding(10) };
-            left.Controls.Add(new Label { Text = "Patients", Font = UiHelpers.Header, Dock = DockStyle.Top, Height = 28 });
+            _patientList = new ListBox { Dock = DockStyle.Fill, Font = UiHelpers.Body };
             var search = new TextBox { Dock = DockStyle.Top, Font = UiHelpers.Body };
             search.PlaceholderText = "Search by name or email...";
-            left.Controls.Add(search);
-            _patientList = new ListBox { Dock = DockStyle.Fill, Font = UiHelpers.Body };
-            left.Controls.Add(_patientList);
-            Controls.Add(left);
+            var patientsHeader = new Label { Text = "Patients", Font = UiHelpers.Header, Dock = DockStyle.Top, Height = 28 };
+            left.Controls.Add(_patientList);   // Fill first
+            left.Controls.Add(search);         // Top, sits above the list
+            left.Controls.Add(patientsHeader); // Top, added last so it sits at the very top
 
             ReloadPatients(null);
             search.TextChanged += (s, e) => ReloadPatients(search.Text);
@@ -72,11 +75,17 @@ namespace EMR.Backend.UI
                 Font = UiHelpers.Header,
                 Padding = new Padding(10, 6, 0, 0),
             };
-            // Order matters for Dock-based layout: Fill must be added LAST so
-            // earlier docks (Top/Left) get their slice first.
             _tabs = UiHelpers.MakeTabControl();
-            Controls.Add(_selectedLabel);
-            Controls.Add(_tabs);
+
+            // Same rule at the form level: Fill first, then Top/Left docks in
+            // visual bottom-to-top order. The last-added control (top bar) is
+            // docked first and carves out its 60 px before `left` claims the
+            // left edge -- without this ordering the patient list gets clipped
+            // behind the top bar.
+            Controls.Add(_tabs);            // Fill -- claims leftover
+            Controls.Add(_selectedLabel);   // Top, 30 px, sits above _tabs in the right column
+            Controls.Add(left);             // Left, 300 px, claimed before top
+            Controls.Add(top);              // Top, 60 px -- added last so it's docked first
         }
 
         private void ReloadPatients(string filter)
@@ -115,7 +124,7 @@ namespace EMR.Backend.UI
         // FR-10
         private TabPage BuildRecordsTab()
         {
-            var tab = new TabPage("Records (FR-10)");
+            var tab = new TabPage("Records");
             var grid = UiHelpers.MakeGrid(0, 0, 0, 0); grid.Dock = DockStyle.Fill;
             grid.DataSource = _recordsRepo.GetByPatient(_selected.PatientID);
             tab.Controls.Add(grid);
@@ -178,7 +187,7 @@ namespace EMR.Backend.UI
         // FR-12
         private TabPage BuildPrescriptionsTab()
         {
-            var tab = new TabPage("Prescriptions (FR-12)");
+            var tab = new TabPage("Prescriptions");
 
             var grid = UiHelpers.MakeGrid(10, 10, 0, 240);
             grid.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
@@ -218,7 +227,7 @@ namespace EMR.Backend.UI
             };
             tab.Controls.Add(chkPharmacy); y += 34;
 
-            tab.Controls.Add(UiHelpers.MakeButton("Prescribe (FR-12)", 140, y, 180, (s, e) =>
+            tab.Controls.Add(UiHelpers.MakeButton("Prescribe", 140, y, 180, (s, e) =>
             {
                 if (cboMed.SelectedItem is not MedItem med) { UiHelpers.Error("Select a medication."); return; }
                 if (string.IsNullOrWhiteSpace(dosage.Text)) { UiHelpers.Error("Dosage is required."); return; }
@@ -254,7 +263,7 @@ namespace EMR.Backend.UI
         // FR-14
         private TabPage BuildLabsTab()
         {
-            var tab = new TabPage("Lab Results (FR-14)");
+            var tab = new TabPage("Lab Results");
 
             var grid = UiHelpers.MakeGrid(10, 10, 0, 0);
             grid.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
@@ -280,7 +289,7 @@ namespace EMR.Backend.UI
             status.SelectedIndex = 0;
             tab.Controls.Add(status); y += 40;
 
-            tab.Controls.Add(UiHelpers.MakeButton("Submit (FR-14)", 140, y, 160, (s, e) =>
+            tab.Controls.Add(UiHelpers.MakeButton("Submit", 140, y, 160, (s, e) =>
             {
                 if (string.IsNullOrWhiteSpace(name.Text)) { UiHelpers.Error("Test name required."); return; }
                 int id = _labRepo.AddLabResult(new LabResult
@@ -306,7 +315,7 @@ namespace EMR.Backend.UI
         // FR-13
         private TabPage BuildChronicTab()
         {
-            var tab = new TabPage("Chronic Tracking (FR-13)");
+            var tab = new TabPage("Chronic Tracking");
             var grid = UiHelpers.MakeGrid(0, 0, 0, 0); grid.Dock = DockStyle.Fill;
             grid.DataSource = _recordsRepo.GetChronicByPatient(_selected.PatientID);
             tab.Controls.Add(grid);
@@ -317,7 +326,7 @@ namespace EMR.Backend.UI
         private void ShowMyAppointments()
         {
             using (var f = new SimpleGridForm(
-                "My Upcoming & Past Appointments (FR-11)",
+                "My Upcoming & Past Appointments",
                 _aptRepo.GetByStaff(_me.StaffID)))
             {
                 _audit.LogStaff(_me.StaffID, "Viewed my appointments (FR-11)");
@@ -407,7 +416,7 @@ namespace EMR.Backend.UI
             };
             tab.Controls.Add(datePicker); y += 34;
 
-            tab.Controls.Add(UiHelpers.MakeButton("Record (FR-13)", 120, y, 160, (s, e) =>
+            tab.Controls.Add(UiHelpers.MakeButton("Record", 120, y, 160, (s, e) =>
             {
                 if (string.IsNullOrWhiteSpace(vaccine.Text)) { UiHelpers.Error("Vaccine name required."); return; }
                 int id = _immunRepo.AddImmunization(new Immunization
