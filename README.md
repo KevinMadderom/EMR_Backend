@@ -156,11 +156,9 @@ Some of the main features include:
 
 ## How to Run the Project
 
-1. Install MySQL.
-2. Create the EMR database using the SQL files.
+1. Install MySQL and open MySQL Workbench.
+2. Create the EMR database using 'SQL/00_full_schema.sql'.
 3. Update the database connection string in `appsettings.json` and replace the password with your local MySQL root password:
-4. Open the project in Visual Studio (.NET 9 SDK must be installed)
-5. Build and run the project.
 
 Example connection string:
 
@@ -171,6 +169,11 @@ Example connection string:
   }
 }
 ```
+
+4. Open `EMR_Backend.sln` in Visual Studio (.NET 9 SDK must be installed)
+5. Build and run the project.
+
+
 
 ## First Login
 
