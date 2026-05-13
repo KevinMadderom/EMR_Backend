@@ -46,6 +46,11 @@ namespace EMR.Backend.UI
                 Size = new Size(w, 32),
                 Font = Body,
             };
+            // Grow (never shrink) the button so the caller's intended width is a floor, not a cap —
+            // long labels stay visible without forcing every call site to recalculate widths.
+            var textSize = TextRenderer.MeasureText(text, Body);
+            int needed = textSize.Width + 24;
+            if (needed > b.Width) b.Width = needed;
             if (onClick != null) b.Click += onClick;
             return b;
         }
@@ -104,6 +109,17 @@ namespace EMR.Backend.UI
                 BackColor = Color.FromArgb(247, 249, 252),
                 ForeColor = Color.Black,
             };
+            // Fill mode otherwise squeezes columns below their header text. Forcing each column's
+            // MinimumWidth to its header width keeps labels visible; if the sum exceeds the grid,
+            // a horizontal scrollbar appears instead of clipped headers.
+            g.DataBindingComplete += (_, __) =>
+            {
+                foreach (DataGridViewColumn col in g.Columns)
+                {
+                    var headerSize = TextRenderer.MeasureText(col.HeaderText, Header);
+                    col.MinimumWidth = headerSize.Width + 24; // padding for sort glyph + cell margin
+                }
+            };
             return g;
         }
 
@@ -124,7 +140,23 @@ namespace EMR.Backend.UI
                 DrawMode  = TabDrawMode.OwnerDrawFixed,
                 Alignment = verticalSidebar ? TabAlignment.Left : TabAlignment.Top,
                 Multiline = true,
-                ItemSize  = verticalSidebar ? new Size(45, 200) : new Size(88, 36),
+                ItemSize  = verticalSidebar ? new Size(45, 220) : new Size(160, 36),
+            };
+
+            // OwnerDrawFixed forces every tab to share one ItemSize. Once the caller has populated
+            // TabPages, measure the longest label (in the bold "selected" font) and grow the strip
+            // so no label is clipped. For vertical sidebars the long axis is Height, not Width.
+            tc.HandleCreated += (_, __) =>
+            {
+                if (tc.TabPages.Count == 0) return;
+                int needed = verticalSidebar ? 180 : 120;
+                foreach (TabPage p in tc.TabPages)
+                {
+                    var sz = TextRenderer.MeasureText(p.Text, Header);
+                    int w = sz.Width + 28;
+                    if (w > needed) needed = w;
+                }
+                tc.ItemSize = verticalSidebar ? new Size(45, needed) : new Size(needed, 36);
             };
 
             tc.DrawItem += (sender, e) =>

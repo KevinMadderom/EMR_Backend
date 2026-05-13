@@ -244,6 +244,10 @@ namespace EMR.Backend.UI
                 if (id > 0)
                 {
                     _audit.LogStaff(_me.StaffID, $"Prescribed medication {med.Id} for patient {_selected.PatientID}");
+                    LogActivityRecord(
+                        diagnosis: $"Prescription: {med}",
+                        notes:     $"Dosage: {dosage.Text.Trim()}; Refills: {(int)refills.Value}; Sent to pharmacy: {chkPharmacy.Checked}",
+                        type:      "Prescription");
                     UiHelpers.Info("Prescription written.");
                     BuildPatientTabs();
                 }
@@ -304,6 +308,10 @@ namespace EMR.Backend.UI
                 if (id > 0)
                 {
                     _audit.LogStaff(_me.StaffID, $"Submitted LabResult #{id} for patient {_selected.PatientID}");
+                    LogActivityRecord(
+                        diagnosis: $"Lab: {name.Text.Trim()}",
+                        notes:     $"Result: {result.Text.Trim()} ({(string)status.SelectedItem})",
+                        type:      "Lab Result");
                     UiHelpers.Info("Lab result submitted.");
                     BuildPatientTabs();
                 }
@@ -322,11 +330,30 @@ namespace EMR.Backend.UI
             return tab;
         }
 
+        // Mirror any doctor write-action into MedicalRecord so the patient's
+        // Medical History reflects everything the doctor did.
+        // Diagnosis is capped to fit the VARCHAR(100) column in the schema.
+        private void LogActivityRecord(string diagnosis, string notes, string type)
+        {
+            if (_selected == null) return;
+            if (diagnosis != null && diagnosis.Length > 100) diagnosis = diagnosis.Substring(0, 100);
+            _recordsRepo.AddRecord(new MedicalRecord
+            {
+                PatientID    = _selected.PatientID,
+                StaffID      = _me.StaffID,
+                DateCreated  = DateTime.Today,
+                DateModified = DateTime.Today,
+                Diagnosis    = diagnosis ?? "",
+                Notes        = notes ?? "",
+                RecordType   = type,
+            });
+        }
+
         // FR-11
         private void ShowMyAppointments()
         {
             using (var f = new SimpleGridForm(
-                "My Upcoming & Past Appointments",
+                "My Upcoming And Past Appointments",
                 _aptRepo.GetByStaff(_me.StaffID)))
             {
                 _audit.LogStaff(_me.StaffID, "Viewed my appointments");
@@ -372,7 +399,15 @@ namespace EMR.Backend.UI
                     AllergenName = name.Text.Trim(),
                     Severity     = (string)sev.SelectedItem,
                 });
-                if (id > 0) { name.Clear(); Reload(); }
+                if (id > 0)
+                {
+                    LogActivityRecord(
+                        diagnosis: $"Allergy: {name.Text.Trim()}",
+                        notes:     $"Severity: {(string)sev.SelectedItem}",
+                        type:      "Allergy");
+                    name.Clear();
+                    Reload();
+                }
                 else UiHelpers.Error("Could not add allergy.");
             }));
 
@@ -429,6 +464,10 @@ namespace EMR.Backend.UI
                 if (id > 0)
                 {
                     _audit.LogStaff(_me.StaffID, $"Recorded immunization for patient {_selected.PatientID}");
+                    LogActivityRecord(
+                        diagnosis: $"Immunization: {vaccine.Text.Trim()}",
+                        notes:     $"Date administered: {datePicker.Value.Date:yyyy-MM-dd}",
+                        type:      "Immunization");
                     vaccine.Clear();
                     Reload();
                 }
