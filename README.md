@@ -96,3 +96,88 @@ and replace the value in `00_full_schema.sql` / `01_migration_add_auth.sql`.
 The application uses the `BCrypt.Net-Next` package; you can reproduce the
 hash by calling `AuthService.HashPassword("yourPassword")` from any short
 .NET console snippet.
+
+
+
+
+
+# Start of new ReadMe
+
+# EMR - Electronic Medical Record Keeping System
+
+This is our CSCI 455 Electronic Medical Record project. The system is meant to help store and manage patient medical information using a database and a simple desktop application.
+
+## Team Members
+
+- Sadie LaPlant
+- Ryker Ellingworth
+- Kevin Madderom
+- Madalynn Sauter
+
+## Project Description
+
+The EMR system is designed for a healthcare clinic to manage patient records more easily. Instead of using paper records, the system stores information in a MySQL database and allows different users to access the parts of the system they need.
+
+The main users of the system are:
+
+- Patients
+- Doctors
+- Staff
+- Admins
+
+## Main Features
+
+Some of the main features include:
+
+- Patient registration
+- Patient login
+- Staff and doctor login
+- Viewing medical records
+- Viewing lab results
+- Managing appointments
+- Managing prescriptions
+- Admin user management
+- Audit logs for important actions
+
+## Technologies Used
+
+- C#
+- Windows Forms
+- MySQL
+- .NET
+- Visual Studio
+
+## Project Structure
+
+- `EMR.Backend/` - main C# Windows Forms project
+- `SQL/` - database setup and migration scripts
+- `database_schema.sql` - SQL file for creating the database tables
+- `EMR_Backend.sln` - Visual Studio solution file
+
+## How to Run the Project
+
+1. Install MySQL.
+2. Create the EMR database using the SQL files.
+3. Update the database connection string in `appsettings.json` and replace the password with your local MySQL root password:
+4. Open the project in Visual Studio (.NET 9 SDK must be installed)
+5. Build and run the project.
+
+Example connection string:
+
+```json
+{
+  "ConnectionStrings": {
+    "EMRKS": "server=localhost;database=EMRKS;uid=root;pwd=YourPassword;"
+  }
+}
+
+## First Login
+
+A default admin user is seeded by the schema script:
+
+| Username | Password   |
+|----------|------------|
+| `admin`  | `admin123` |
+
+
+Log in as **Admin**, then add users from the admin console.
