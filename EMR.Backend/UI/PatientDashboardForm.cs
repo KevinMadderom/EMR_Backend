@@ -58,7 +58,6 @@ namespace EMR.Backend.UI
             tabs.TabPages.Add(BuildChronicTab());
             tabs.TabPages.Add(BuildBillingTab());
             tabs.TabPages.Add(BuildLabResultsTab());
-            tabs.TabPages.Add(BuildNotificationsTab());
             tabs.TabPages.Add(BuildAllergiesTab());
             tabs.TabPages.Add(BuildImmunizationsTab());
             tabs.TabPages.Add(BuildInsuranceTab());

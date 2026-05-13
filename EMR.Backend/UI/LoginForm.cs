@@ -61,15 +61,6 @@ namespace EMR.Backend.UI
 
             AcceptButton = btnLogin;
 
-            Controls.Add(new Label
-            {
-                Text = "Default admin: admin / admin123  (change after first login)",
-                Location = new Point(20, 332),
-                Size = new Size(420, 22),
-                ForeColor = Color.Gray,
-                TextAlign = ContentAlignment.MiddleCenter,
-                Font = new Font("Segoe UI", 8.25F, FontStyle.Italic),
-            });
         }
 
         private void OnLogin(object sender, EventArgs e)
