@@ -35,6 +35,7 @@ namespace EMR.Backend.UI
             StartPosition = FormStartPosition.CenterScreen;
             Size = new Size(1000, 680);
             MinimumSize = new Size(900, 600);
+            WindowState = FormWindowState.Maximized;
 
             var top = new Panel { Dock = DockStyle.Top, Height = 60, BackColor = Color.FromArgb(245, 247, 250) };
             top.Controls.Add(new Label

@@ -29,6 +29,7 @@ namespace EMR.Backend.UI
             StartPosition = FormStartPosition.CenterScreen;
             Size = new Size(1200, 760);
             MinimumSize = new Size(1000, 640);
+            WindowState = FormWindowState.Maximized;
 
             // ── Content host ───────────────────────────────────────────────
             var host = new Panel { Dock = DockStyle.Fill };

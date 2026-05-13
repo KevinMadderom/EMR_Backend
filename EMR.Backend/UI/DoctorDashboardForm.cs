@@ -35,6 +35,7 @@ namespace EMR.Backend.UI
             StartPosition = FormStartPosition.CenterScreen;
             Size = new Size(1200, 720);
             MinimumSize = new Size(1000, 600);
+            WindowState = FormWindowState.Maximized;
 
             // Top bar
             var top = new Panel { Dock = DockStyle.Top, Height = 60, BackColor = Color.FromArgb(245, 247, 250) };
@@ -324,9 +325,61 @@ namespace EMR.Backend.UI
         private TabPage BuildChronicTab()
         {
             var tab = new TabPage("Chronic Tracking");
-            var grid = UiHelpers.MakeGrid(0, 0, 0, 0); grid.Dock = DockStyle.Fill;
-            grid.DataSource = _recordsRepo.GetChronicByPatient(_selected.PatientID);
+
+            DataGridView grid = null;
+            void Reload() { grid.DataSource = _recordsRepo.GetChronicByPatient(_selected.PatientID); }
+
+            grid = UiHelpers.MakeGrid(10, 10, 0, 220);
+            grid.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            Reload();
             tab.Controls.Add(grid);
+
+            int y = 240;
+            tab.Controls.Add(UiHelpers.MakeLabel("Add Chronic Condition", 10, y, 260, true)); y += 28;
+
+            tab.Controls.Add(UiHelpers.MakeLabel("Condition", 10, y, 100));
+            var cboCondition = new ComboBox
+            {
+                Location = new Point(120, y - 2), Size = new Size(220, 24),
+                Font = UiHelpers.Body, DropDownStyle = ComboBoxStyle.DropDownList,
+            };
+            cboCondition.Items.AddRange(new object[]
+            {
+                "Diabetes", "Hypertension", "Asthma", "Heart Disease",
+                "Arthritis", "COPD", "Kidney Disease", "Other"
+            });
+            cboCondition.SelectedIndex = 0;
+            tab.Controls.Add(cboCondition); y += 34;
+
+            tab.Controls.Add(UiHelpers.MakeLabel("Diagnosis", 10, y, 100));
+            var diag = new TextBox { Location = new Point(120, y - 2), Size = new Size(500, 24), Font = UiHelpers.Body };
+            tab.Controls.Add(diag); y += 34;
+
+            tab.Controls.Add(UiHelpers.MakeLabel("Notes", 10, y, 100));
+            var notes = new TextBox
+            {
+                Location = new Point(120, y - 2), Size = new Size(700, 80),
+                Font = UiHelpers.Body, Multiline = true, ScrollBars = ScrollBars.Vertical,
+            };
+            tab.Controls.Add(notes); y += 92;
+
+            tab.Controls.Add(UiHelpers.MakeButton("Add Chronic Condition", 120, y, 200, (s, e) =>
+            {
+                if (string.IsNullOrWhiteSpace(diag.Text))
+                {
+                    UiHelpers.Error("Diagnosis is required.");
+                    return;
+                }
+                LogActivityRecord(
+                    diagnosis: diag.Text.Trim(),
+                    notes:     notes.Text.Trim(),
+                    type:      $"Chronic - {(string)cboCondition.SelectedItem}");
+                _audit.LogStaff(_me.StaffID, $"Added chronic condition for patient {_selected.PatientID}");
+                diag.Clear();
+                notes.Clear();
+                Reload();
+            }));
+
             return tab;
         }
 
