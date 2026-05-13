@@ -53,17 +53,11 @@ Some of the main features include:
 
 1. Install MySQL and open MySQL Workbench.
 2. Create the EMR database using 'SQL/00_full_schema.sql'.
-3. Update the database connection string in `appsettings.json` and replace the password with your local MySQL root password:
+3. Update the database connection string in DatabaseHelper.cs and replace the password with your local MySQL root password:
 
-Example connection string:
+Example connection string within DatabaseHelper.cs file:
 
-```json
-{
-  "ConnectionStrings": {
-    "EMRKS": "server=localhost;database=EMRKS;uid=root;pwd=YourPassword;"
-  }
-}
-```
+private static string _connStr = "Server=localhost;Database=EMRKS;Uid=root;Pwd=YOUR_PASSWORD;";
 
 4. Open `EMR_Backend.sln` in Visual Studio (.NET 9 SDK must be installed)
 5. Build and run the project.
