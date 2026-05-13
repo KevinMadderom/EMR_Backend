@@ -8,7 +8,7 @@ namespace EMR.Backend.Repositories
 {
     public class MedicalRecordRepository
     {
-        // Doctor (d) adds a new medical record for patient (p) -- §4.2.
+        // Doctor (d) adds a new medical record for patient (p).
         public int AddRecord(MedicalRecord m)
         {
             using (var conn = DatabaseHelper.GetConnection())

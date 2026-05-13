@@ -277,9 +277,8 @@ namespace EMR.Backend.UI
                     "Database maintenance",
                     "====================",
                     "",
-                    "  - Connection: see appsettings.json",
-                    "  - Schema: see SQL/00_full_schema.sql",
-                    "  - Migrations: SQL/01_migration_add_auth.sql",
+                    "  - Connection: see DatabaseHelper.cs",
+                    "  - Schema: see SQL/create_database.sql",
                     "",
                     "Common tasks (run in MySQL Workbench):",
                     "  USE EMRKS;",
@@ -288,8 +287,6 @@ namespace EMR.Backend.UI
                     "  SELECT COUNT(*) FROM Staff;",
                     "  SELECT * FROM AuditLog ORDER BY Time_Stamp DESC LIMIT 50;",
                     "",
-                    "Per FR-19, the admin is responsible for backups, indexes, and",
-                    "permission grants directly on the database server.",
                 }),
             };
             panel.Controls.Add(info);
