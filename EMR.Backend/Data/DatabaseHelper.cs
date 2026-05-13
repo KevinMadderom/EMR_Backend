@@ -5,7 +5,7 @@ namespace EMR.Backend.Data
 {
     public static class DatabaseHelper
     {
-        private static string _connStr = "Server=localhost;Database=EMRKS;Uid=root;Pwd=eLLi2394!;";
+        private static string _connStr = "Server=localhost;Database=EMRKS;Uid=root;Pwd=YourPassword;";
 
         public static MySqlConnection GetConnection()
         {
