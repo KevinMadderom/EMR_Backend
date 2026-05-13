@@ -170,6 +170,7 @@ Example connection string:
     "EMRKS": "server=localhost;database=EMRKS;uid=root;pwd=YourPassword;"
   }
 }
+```
 
 ## First Login
 
